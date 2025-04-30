@@ -430,8 +430,50 @@ class ModernApp(tk.Tk):
         self.show_report(entry["report"])
 
     def show_stats_dialog(self):
-        # ... (реализация статистики за период)
-        pass
+        # Создаём окно для ввода дат
+        dialog = tk.Toplevel(self)
+        dialog.title("Статистика за период")
+
+        # Поля для ввода даты
+        ttk.Label(dialog, text="Дата начала (ДД.ММ.ГГГГ):").grid(row=0, column=0, padx=5, pady=5)
+        start_entry = ttk.Entry(dialog)
+        start_entry.grid(row=0, column=1, padx=5, pady=5)
+
+        ttk.Label(dialog, text="Дата окончания (ДД.ММ.ГГГГ):").grid(row=1, column=0, padx=5, pady=5)
+        end_entry = ttk.Entry(dialog)
+        end_entry.grid(row=1, column=1, padx=5, pady=5)
+
+        def calculate():
+            try:
+                # Получаем и парсим даты
+                start = datetime.strptime(start_entry.get(), "%d.%m.%Y")
+                end = datetime.strptime(end_entry.get(), "%d.%m.%Y")
+
+                total_fee = 0.0
+                total_clean = 0.0
+
+                for entry in self.history:
+                    # Парсим дату из истории
+                    entry_date = datetime.strptime(entry["report"]["Дата"], "%d.%m.%Y")
+
+                    # Проверяем попадание в диапазон
+                    if start <= entry_date <= end:
+                        total_fee += float(entry["report"]["Зарплата менеджера"].split()[0])
+                        total_clean += float(entry["report"]["Чистый остаток"].split()[0])
+
+                # Отображаем результаты
+                messagebox.showinfo("Результаты", 
+                                    f"Общая зарплата менеджеров: {total_fee:.2f} руб.\n"
+                                    f"Общий чистый остаток: {total_clean:.2f} руб.")
+
+            except ValueError as ve:
+                self.show_error("Ошибка формата", f"Некорректная дата: {str(ve)}")
+            except Exception as e:
+                self.show_error("Ошибка", f"Ошибка расчета: {str(e)}")
+
+        # Кнопка расчета статистики
+        ttk.Button(dialog, text="Рассчитать", command=calculate).grid(row=2, columnspan=2, pady=10)
+
 
     # Вспомогательные методы:
     def ask_float(self, title, prompt):
