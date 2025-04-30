@@ -18,7 +18,7 @@ TEXT_COLOR = "#FFFFFF"    # Цвет текста
 FONT_NAME = "Segoe UI"    # Шрифт по умолчанию
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__)) # Папка скрипта
 HISTORY_FILE = os.path.join(SCRIPT_DIR, "history.json") # Файл истории в каталоге скрипта
-VERSION = "1.4.6-r"
+VERSION = "1.4.6-2r"
 
 
 class ModernApp(tk.Tk):
@@ -442,6 +442,20 @@ class ModernApp(tk.Tk):
         ttk.Label(dialog, text="Дата окончания (ДД.ММ.ГГГГ):").grid(row=1, column=0, padx=5, pady=5)
         end_entry = ttk.Entry(dialog)
         end_entry.grid(row=1, column=1, padx=5, pady=5)
+
+        def format_date(event):
+            widget = event.widget
+            # Очищаем ввод от лишних символов, оставляем до 8 цифр
+            text = widget.get().replace(".", "").replace("/", "")[:8]
+            # Вставляем точки после ДД и ММ
+            if len(text) >= 2:
+                text = f"{text[:2]}.{text[2:4]}.{text[4:8]}"
+            widget.delete(0, tk.END)
+            widget.insert(0, text.strip('.'))
+
+        # Привязываем форматирование к полям ввода дат
+        start_entry.bind("<KeyRelease>", format_date)
+        end_entry.bind("<KeyRelease>", format_date)
 
         def calculate():
             try:
