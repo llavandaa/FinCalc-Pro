@@ -13,4 +13,4 @@ cp main.py icon.ico "$WINEPREFIX/drive_c/build/"
 # Сборка
 echo "🛠 Собираем FinCalcPro.exe..."
 WINEPREFIX=$WINEPREFIX wine "$PYINSTALLER_PATH" \
-  --onefile --noconsole --name="FinCalc Pro v1.4.6-r" --icon=C:/build/icon.ico C:/build/main.py
+  --onefile --noconsole --name="FinCalc Pro v1.4.6-2r" --icon=C:/build/icon.ico C:/build/main.py
